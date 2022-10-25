@@ -1,0 +1,22 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/.idea.I.C.E.iml
+/.idea
+/modules.xml
+/contentModel.xml
+/projectSettingsUpdater.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/Library/APIUpdater
+/Library/Artifacts
+/Library/PackageCache
+/Library/ScriptAssemblies
+/Library/ShaderCache
+/Library/StateCache
+/Library/TempArtifacts
+/Library/UIElements

@@ -8,6 +8,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpPower = 0f; // The power of the jump
     [SerializeField] private Rigidbody2D rb = null; // Rigidbody player
 
+    [SerializeField] private Joystick joystick;
+    
     [SerializeField, Range(35, 100)] private float cubeSize = 0; // Size of cube
     
     private bool _isGrounded = false; // Has the player landed
@@ -20,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground") // The Player on the Ground
+        if (collision.gameObject.CompareTag("Ground")) // The Player on the Ground
         {
             _isGrounded = true;
         }
@@ -36,8 +38,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        float x = Input.GetAxis("Horizontal");
-        float jump = Input.GetAxisRaw("Jump");
+        float x = joystick.Horizontal;
 
         Player.localScale = new Vector3(cubeSize * 0.01f,cubeSize * 0.01f);
         
@@ -57,13 +58,13 @@ public class PlayerMovement : MonoBehaviour
                 cubeSize -= x * -0.03f;
             }
         }
+    }
 
+    public void PlayerJump()
+    {
         if (_isGrounded == true)
         {
-            if (jump == 1)
-            {
-                rb.AddForce(new Vector2(0,jump * jumpPower * Time.deltaTime), ForceMode2D.Impulse);
-            }
+            rb.AddForce(new Vector2(0,3 * jumpPower * Time.deltaTime), ForceMode2D.Impulse);
         }
     }
 }
