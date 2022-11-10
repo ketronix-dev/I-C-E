@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,9 +11,12 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Joystick joystick;
     
-    [SerializeField, Range(35, 100)] private float cubeSize = 0; // Size of cube
+    [SerializeField, Range(35, 100)] public float cubeSize = 0; // Size of cube
     
     private bool _isGrounded = false; // Has the player landed
+    private bool _onIce = false; // Has the player landed
+
+    public bool isFinish;
     
     void Start()
     {
@@ -26,13 +30,24 @@ public class PlayerMovement : MonoBehaviour
         {
             _isGrounded = true;
         }
+
+        if (collision.gameObject.CompareTag("Ice"))
+        {
+            _isGrounded = true;
+            _onIce = true;
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Ground") == true) // Player in flight
+        if (collision.gameObject.CompareTag("Ground")) // Player in flight
         {
             _isGrounded = false;
+        }
+        if (collision.gameObject.CompareTag("Ice"))
+        {
+            _isGrounded = false;
+            _onIce = false;
         }
     }
 
@@ -41,30 +56,49 @@ public class PlayerMovement : MonoBehaviour
         float x = joystick.Horizontal;
 
         Player.localScale = new Vector3(cubeSize * 0.01f,cubeSize * 0.01f);
-        
-        if( x >= 0.1f)
+
+        if (_onIce && cubeSize <= 100)
         {
-            if (cubeSize >= 35)
-            {
-                rb.AddForce(new Vector2(x * speed * Time.deltaTime,0), ForceMode2D.Impulse);
-                cubeSize -= x * 0.03f;
-            }
+            cubeSize += 0.3f * Time.deltaTime;
         }
-        else if( x <= -0.1f)
+
+        if (isFinish != true)
         {
-            if (cubeSize >= 35)
+            if( x >= 0.1f)
             {
-                rb.AddForce(new Vector2(x * speed * Time.deltaTime,0), ForceMode2D.Impulse);
-                cubeSize -= x * -0.03f;
+                if (cubeSize >= 35)
+                {
+                    rb.AddForce(new Vector2(x * speed * Time.deltaTime,0), ForceMode2D.Impulse);
+                    cubeSize -= x * 0.5f * Time.deltaTime;
+                }
+                else
+                {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                }
+            }
+            else if( x <= -0.1f)
+            {
+                if (cubeSize >= 35)
+                {
+                    rb.AddForce(new Vector2(x * speed * Time.deltaTime,0), ForceMode2D.Impulse);
+                    cubeSize -= x * -0.5f * Time.deltaTime;
+                }
+                else
+                {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                }
             }
         }
     }
 
     public void PlayerJump()
     {
-        if (_isGrounded == true)
+        if (isFinish != true)
         {
-            rb.AddForce(new Vector2(0,3 * jumpPower * Time.deltaTime), ForceMode2D.Impulse);
+            if (_isGrounded == true)
+            {
+                rb.AddForce(new Vector2(0,3 * jumpPower * Time.deltaTime), ForceMode2D.Impulse);
+            }
         }
     }
 }
